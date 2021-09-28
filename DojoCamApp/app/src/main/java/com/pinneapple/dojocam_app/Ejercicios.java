@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +34,7 @@ import java.util.List;
  * Use the {@link Ejercicios#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Ejercicios extends Fragment implements View.OnClickListener {
+public class Ejercicios extends Fragment implements AdapterView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -96,7 +98,7 @@ public class Ejercicios extends Fragment implements View.OnClickListener {
 
         difficulty = getArguments().getString("difficulty");
 
-        TextView pri = (TextView) getView().findViewById(R.id.textView);
+        /*TextView pri = (TextView) getView().findViewById(R.id.textView);
         ImageView pri_img = (ImageView) getView().findViewById(R.id.imageView);
 
         Button btn3 = (Button) getView().findViewById(R.id.button3);
@@ -108,18 +110,24 @@ public class Ejercicios extends Fragment implements View.OnClickListener {
         pri_img.setOnClickListener((View.OnClickListener) this);
         btn3.setOnClickListener((View.OnClickListener) this);
         btn4.setOnClickListener((View.OnClickListener) this);
-        btn5.setOnClickListener((View.OnClickListener) this);
+        btn5.setOnClickListener((View.OnClickListener) this);*/
+
+        adapter = new ArrayAdapter(getContext(), R.layout.list_vid, vid_list );
+        ListView lv = (ListView) getView().findViewById(R.id.vid_list);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(this);
 
 
     }
     @Override
-    public void onClick(View view) {
+    public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
         Bundle bundle = new Bundle();
 
         bundle.putString("difficulty" , difficulty);
+        bundle.putString("videoId",  id_list.get(pos));
         bundle.putString("name", "Test Video");
 
-        Navigation.findNavController(view).navigate(R.id.exerciseDetail);
+        Navigation.findNavController(view).navigate(R.id.exerciseDetail, bundle);
     }
 
     @Override
@@ -127,6 +135,8 @@ public class Ejercicios extends Fragment implements View.OnClickListener {
 
         super.onResume();
 
+        vid_list.clear();
+        id_list.clear();
 
         // Get post and answers from database
 
@@ -145,8 +155,8 @@ public class Ejercicios extends Fragment implements View.OnClickListener {
                     id_list.add(command.getDocuments().get(i).getId());
                     i++;
                 }
-                Toast.makeText(getContext(), "Wena", Toast.LENGTH_LONG).show();
-                //adapter.notifyDataSetChanged();
+                //Toast.makeText(getContext(), "Wena", Toast.LENGTH_LONG).show();
+                adapter.notifyDataSetChanged();
                 //loadingDialog.dismissDialog();
             }
 
